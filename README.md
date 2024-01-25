@@ -13,7 +13,7 @@
 > - 网络畅通
 > - leetcode 账号
 >
-> 2 [将代码备份到本地](system_code/doc/clone_proj.md)
+> 2 将代码备份到本地
 >
 > 3 [准备好leetcode cookie](system_code/doc/leetcode_cookie.md)
 >
