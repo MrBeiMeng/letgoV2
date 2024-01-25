@@ -58,7 +58,7 @@ func Test_${funcName}(t *testing.T) {
 				t.Error(err.Error())
 			}
 
-			fmt.Printf("${funcName}(%s) = %v \n", sampleTest, result)
+			logging.Info(fmt.Sprintf("longestPalindrome(%s) = %v ", sampleTest, result))
 		})
 	}
 

@@ -50,7 +50,7 @@ func runFunc(function interface{}, strParams []string) (error, string) {
 		}
 
 		outputStr.WriteString(resStr)
-		outputStr.WriteString("\n")
+		//outputStr.WriteString("\n")
 	}
 
 	return nil, outputStr.String()

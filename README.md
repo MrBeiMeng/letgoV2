@@ -15,9 +15,13 @@
 >
 > 2 将代码备份到本地
 >
-> 3 [准备好leetcode cookie](system_code/doc/leetcode_cookie.md)
+> 3.1 将[conf-template替换成conf.yaml](system_code/conf/conf-template.yaml)
+>
+> 3.2 [准备好leetcode cookie并修改conf.yaml](system_code/doc/leetcode_cookie.md)
 >
 > 4 letgo down -i 题目ID
+> 
+> ![ss](system_code\doc\letgo%20down.gif "yes")
 
 ## 🔎项目结构
 
