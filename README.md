@@ -21,7 +21,7 @@
 >
 > 4 letgo down -i 题目ID
 > 
-> ![ss](system_code\doc\letgo%20down.gif "yes")
+> <img src="system_code/doc/letgo_down.gif" alt="ss" title="yes" style="zoom: 80%;" />
 
 ## 🔎项目结构
 
