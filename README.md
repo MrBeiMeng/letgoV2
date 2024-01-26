@@ -69,4 +69,4 @@
 
 ## 📢📣 声明
 
-本项目仅供学习参考之用途，请勿用于商业。
+本项目遵循 [GPL-3.0 License](https://github.com/liuyunfz/chaoxing_tool/blob/master/LICENSE) ，仅作为学习途径使用，请勿用于商业用途或破坏他人的知识产权
