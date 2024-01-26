@@ -6,6 +6,15 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
-func (t TreeNode) String() string {
-	return "[" + treeToString(&t) + "]"
+func (t *TreeNode) LoadFromStr(str string) error {
+	tree := StrToBinaryTree(str)
+	t.Val = tree.Val
+	t.Left = tree.Left
+	t.Right = tree.Right
+
+	return nil
+}
+
+func (t *TreeNode) String() string {
+	return "[" + LevelOrderTraversal(t, true) + "]"
 }

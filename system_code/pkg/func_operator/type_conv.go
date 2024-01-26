@@ -3,6 +3,7 @@ package func_operator
 import (
 	"errors"
 	"fmt"
+	"letgoV2/system_code/pkg/common"
 	"letgoV2/system_code/pkg/logging"
 	"reflect"
 	"strconv"
@@ -52,6 +53,20 @@ func convStr2TypeValue(strParam string, typeOf reflect.Type) (error, reflect.Val
 			result.Index(i).Set(value)
 		}
 
+	case reflect.Pointer:
+		if typeOf == reflect.TypeOf(&common.TreeNode{}) {
+			result = reflect.ValueOf(common.StrToBinaryTree(strParam))
+			break
+		}
+		fallthrough
+
+	case reflect.Struct:
+		if typeOf == reflect.TypeOf(common.TreeNode{}) {
+			result = reflect.ValueOf(*common.StrToBinaryTree(strParam))
+			break
+		}
+		fallthrough
+
 	default:
 		errStr := fmt.Sprintf("未处理的类型转换")
 		logging.Error(errStr)
@@ -77,8 +92,11 @@ func convTypeValue2Str(value reflect.Value) (error, string) {
 		return nil, strconv.FormatFloat(value.Float(), 'f', -1, 64)
 	case reflect.Bool:
 		return nil, strconv.FormatBool(value.Bool())
+
+	case reflect.Slice, reflect.Array:
+		return nil, fmt.Sprintf("%v", value)
 	default:
 		// 如果无法处理的类型，返回空字符串或者进行其他处理
-		panic("implement me")
+		return nil, fmt.Sprintf("%v", value)
 	}
 }

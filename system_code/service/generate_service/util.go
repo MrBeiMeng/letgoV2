@@ -383,7 +383,7 @@ func addImportIfNeed(snippet string) string {
 )`
 
 	importSnippet := ``
-	if len(needImportPackageList) == 0 {
+	if len(needImportPackageList) != 0 {
 		importSnippet = `
 import (
 	. "letgoV2/system_code/pkg/common"
