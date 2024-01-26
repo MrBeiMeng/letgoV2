@@ -1,17 +1,16 @@
 package generate_service
 
-import "letgoV2/system_code/pkg/logging"
+import (
+	"letgoV2/system_code/pkg/logging"
+)
 
 func getSnippetFileCodeDGo(param fileCodeParam) (err error, snippet, fileName string) {
 	fileName = "code.go"
 	codeTemplate := `
 package ${packageName}
-
 import (
-	_ "letgoV2/system_code/pkg/common"
+	_ "fmt"
 )
-
-
 ${goCodeSnippet}
 
 `
@@ -25,6 +24,7 @@ ${goCodeSnippet}
 		return
 	}
 
+	snippet = addImportIfNeed(snippet)
 	return
 }
 

@@ -1,7 +1,9 @@
 package util
 
 import (
+	"errors"
 	"fmt"
+	"letgoV2/system_code/pkg/logging"
 	"letgoV2/system_code/pkg/logging/http_logging"
 	"net/http"
 	"reflect"
@@ -19,6 +21,11 @@ func HttpPost(url string, cookies string, headerMap map[string]string, requestBo
 	for _, cookie := range strings.Split(cookies, ";") {
 		cookie = strings.TrimSpace(cookie)
 		cs := strings.Split(cookie, "=")
+		if len(cs) < 2 {
+			errStr := fmt.Sprintf("cookie格式不正确")
+			logging.Error(errStr)
+			return errors.New(errStr), nil
+		}
 		name := cs[0]
 		value := cs[1]
 		req.AddCookie(&http.Cookie{Name: name, Value: value})

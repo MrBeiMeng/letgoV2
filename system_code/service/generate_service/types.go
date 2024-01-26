@@ -1,7 +1,6 @@
 package generate_service
 
 import (
-	"encoding/json"
 	"letgoV2/system_code/pkg/logging"
 	"letgoV2/system_code/pkg/util"
 	"strings"
@@ -52,17 +51,25 @@ type FileMetaData struct {
 }
 
 func NewFileMetaData(packageName string, jsonExampleTestcases string) *FileMetaData {
-	args := make([]string, 0)
 
-	err := json.Unmarshal([]byte(jsonExampleTestcases), &args)
-	if err != nil {
-		logging.Error(err)
-	}
-	//for i := range args {
-	//	args[i] = fmt.Sprintf("\"%s\"", args)
+	trimTestsStr := strings.Trim(jsonExampleTestcases, "[]")
+	lineTestsStr := strings.ReplaceAll(trimTestsStr, "\n", "\\n")
+
+	//args := make([]string, 0)
+	//
+	//err := json.Unmarshal([]byte(jsonExampleTestcases), &args)
+	//if err != nil {
+	//	logging.Error(err)
 	//}
-
-	return &FileMetaData{PackageName: packageName, SampleTests: strings.Join(args, ",")}
+	//for i := range args {
+	//	if strings.Contains(args[i], "\"") {
+	//		continue
+	//	}
+	//	args[i] = fmt.Sprintf("`%s`", args)
+	//}
+	//
+	//return &FileMetaData{PackageName: packageName, SampleTests: strings.Join(args, ",")}
+	return &FileMetaData{PackageName: packageName, SampleTests: lineTestsStr}
 }
 
 type fileReadMeEnParam struct {

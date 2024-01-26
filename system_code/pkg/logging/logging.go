@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 type Level int
@@ -41,27 +42,32 @@ func init() {
 
 func Debug(v ...interface{}) {
 	setPrefix(DEBUG)
-	logger.Println(v)
+	logger.Println(replaceNextLine(v))
 }
 
 func Info(v ...interface{}) {
 	setPrefix(INFO)
-	logger.Println(v)
+	logger.Println(replaceNextLine(v))
 }
 
 func Warn(v ...interface{}) {
 	setPrefix(WARNING)
-	logger.Println(v)
+	logger.Println(replaceNextLine(v))
 }
 
 func Error(v ...interface{}) {
 	setPrefix(ERROR)
-	logger.Println(v)
+	logger.Println(replaceNextLine(v))
 }
 
 func Fatal(v ...interface{}) {
 	setPrefix(FATAL)
 	logger.Fatalln(v)
+}
+
+func replaceNextLine(v ...interface{}) string {
+	str := fmt.Sprintf("%v", v)
+	return strings.ReplaceAll(str, "\n", "\\n")
 }
 
 func setPrefix(level Level) {

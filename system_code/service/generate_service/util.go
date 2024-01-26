@@ -238,7 +238,7 @@ func UpdateGoCodeSnippetByAst(codeContent string) (error, string) {
 	return nil, modifiedCode.String()
 }
 
-func findUnusedFunctionNames(code string) (error, []string) {
+func FindUnusedFunctionNames(code string) (error, []string) {
 	// 解析代码
 	fset := token.NewFileSet()
 	node, err := parser.ParseFile(fset, "", code, parser.ParseComments)
@@ -279,10 +279,83 @@ func findUnusedFunctionNames(code string) (error, []string) {
 	return nil, unusedFunctions
 }
 
+// isBuiltinType checks if the given type is a built-in Go type
+func isBuiltinType(typeName string) bool {
+	typeName = strings.ReplaceAll(typeName, "map", "")
+	switch strings.Trim(typeName, "[]*") {
+	case "bool", "byte", "complex64", "complex128", "error", "float32", "float64",
+		"int", "int8", "int16", "int32", "int64", "rune", "string", "uint", "uint8",
+		"uint16", "uint32", "uint64", "uintptr":
+		return true
+	default:
+		return false
+	}
+}
+
+// 辅助函数：获取类型名称
+func getTypeName(expr ast.Expr) string {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		return t.Name
+	case *ast.SelectorExpr:
+		return fmt.Sprintf("%s.%s", t.X, t.Sel.Name)
+	case *ast.StarExpr:
+		return "*" + getTypeName(t.X)
+	case *ast.ArrayType:
+		return "[]" + getTypeName(t.Elt)
+	case *ast.MapType:
+		return "map[" + getTypeName(t.Key) + "]" + getTypeName(t.Value)
+	// 添加其他类型的处理逻辑，如结构体等
+	default:
+		return "UnknownType"
+	}
+}
+
+// GetNeedImportPackageList codeContent 要求是一个完整的代码内容 包括package
+func GetNeedImportPackageList(codeContent string) (result []string) {
+	// 解析代码
+	fset := token.NewFileSet()
+	node, err := parser.ParseFile(fset, "", codeContent, parser.ParseComments)
+	if err != nil {
+		panic(err)
+	}
+
+	// 遍历所有函数声明，检查是否被调用
+	for _, decl := range node.Decls {
+		if funcDecl, ok := decl.(*ast.FuncDecl); ok {
+			//funcName := funcDecl.Name.Name
+			// 输出函数或方法的名称
+			logging.Info(fmt.Sprintf("Function/Method Name: %s\n", funcDecl.Name.Name))
+
+			// 检查函数或方法是否有参数
+			if funcDecl.Type.Params != nil {
+				// 遍历参数列表
+				for _, field := range funcDecl.Type.Params.List {
+					// 输出参数类型
+					for _, paramName := range field.Names {
+						// 获取参数的类型名称
+						typeName := getTypeName(field.Type)
+
+						logging.Info(fmt.Sprintf("Parameter Name: %s, Type: %s ", paramName.Name, typeName))
+
+						if !isBuiltinType(typeName) {
+							result = append(result, typeName)
+						}
+					}
+				}
+			} else {
+				logging.Warn(fmt.Sprintf("No parameters for this function/method."))
+			}
+		}
+	}
+
+	return
+}
+
 // 这个方法负责冲代码中获取一个且仅一个未被调用的函数，用来进行测试代码编写
 func getOneFuncName(snippet string) (error, string) {
 	completeSnippet := fmt.Sprintf("package main\n\n%s", snippet)
-	err, funNameList := findUnusedFunctionNames(completeSnippet)
+	err, funNameList := FindUnusedFunctionNames(completeSnippet)
 	if err != nil {
 		return err, ""
 	}
@@ -300,4 +373,24 @@ func getOneFuncName(snippet string) (error, string) {
 	}
 
 	return nil, funNameList[0]
+}
+
+// 添加引用
+func addImportIfNeed(snippet string) string {
+	needImportPackageList := GetNeedImportPackageList(snippet)
+	replaceFlag := `import (
+	_ "fmt"
+)`
+
+	importSnippet := ``
+	if len(needImportPackageList) == 0 {
+		importSnippet = `
+import (
+	. "letgoV2/system_code/pkg/common"
+)`
+		logging.Info(fmt.Sprintf("添加了import字段"))
+	}
+
+	snippet = strings.ReplaceAll(snippet, replaceFlag, importSnippet)
+	return snippet
 }

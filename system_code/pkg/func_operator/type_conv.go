@@ -6,16 +6,19 @@ import (
 	"letgoV2/system_code/pkg/logging"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 // 将字符串类型转为golang类型
-func convStr2TypeValue(strParam string, valueOf reflect.Type) (error, reflect.Value) {
+func convStr2TypeValue(strParam string, typeOf reflect.Type) (error, reflect.Value) {
 	// 难点在于嵌套的类型，比如二维数组
 	result := reflect.Value{}
 
-	switch valueOf.Kind() {
+	switch typeOf.Kind() {
 	case reflect.String:
 		result = reflect.ValueOf(strParam)
+	case reflect.Uint8:
+		result = reflect.ValueOf(strParam[0])
 	case reflect.Int:
 		finalInt, err := strconv.Atoi(strParam)
 		if err != nil {
@@ -35,17 +38,19 @@ func convStr2TypeValue(strParam string, valueOf reflect.Type) (error, reflect.Va
 		}
 		result = reflect.ValueOf(finalBool)
 	case reflect.Slice, reflect.Array:
+		trimStrParam := strings.Trim(strParam, "[]")
+		dataList := strings.Split(trimStrParam, ",")
+		elemType := typeOf.Elem()
+		result = reflect.MakeSlice(typeOf, len(dataList), len(dataList))
 
-		panic("implement me")
+		for i, strData := range dataList {
+			err, value := convStr2TypeValue(strData, elemType)
+			if err != nil {
+				return err, reflect.Value{}
+			}
 
-		//// 处理切片和数组的情况，递归调用 convStr2TypeValue
-		//elemType := valueOf.Elem()
-		//elemValue := reflect.New(elemType).Elem()
-		//// 这里需要根据具体情况调整，例如处理逗号分隔的字符串转为切片
-		//// 这里仅作示例，具体实现需要根据需求修改
-		//// elemValue = convertStringToSlice(strParam, elemType)
-		//result = reflect.MakeSlice(valueOf, 1, 1)
-		//result.Index(0).Set(elemValue)
+			result.Index(i).Set(value)
+		}
 
 	default:
 		errStr := fmt.Sprintf("未处理的类型转换")
