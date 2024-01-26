@@ -5,3 +5,7 @@ type TreeNode struct {
 	Left  *TreeNode
 	Right *TreeNode
 }
+
+func (t TreeNode) String() string {
+	return "[" + treeToString(&t) + "]"
+}
