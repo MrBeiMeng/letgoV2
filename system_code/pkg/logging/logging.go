@@ -37,7 +37,7 @@ func init() {
 
 	multiWriter := io.MultiWriter(os.Stdout, F)
 
-	logger = log.New(multiWriter, DefaultPrefix, log.LstdFlags)
+	logger = log.New(multiWriter, DefaultPrefix, log.Ltime)
 }
 
 func Debug(v ...interface{}) {
@@ -47,7 +47,7 @@ func Debug(v ...interface{}) {
 
 func Info(v ...interface{}) {
 	setPrefix(INFO)
-	logger.Println(replaceNextLine(v))
+	logger.Println(replaceNextLine(v...))
 }
 
 func Warn(v ...interface{}) {
@@ -66,16 +66,16 @@ func Fatal(v ...interface{}) {
 }
 
 func replaceNextLine(v ...interface{}) string {
-	str := fmt.Sprintf("%v", v)
+	str := fmt.Sprint(v...)
 	return strings.ReplaceAll(str, "\n", "\\n")
 }
 
 func setPrefix(level Level) {
 	_, file, line, ok := runtime.Caller(DefaultCallerDepth)
-	if ok {
+	if !ok {
 		logPrefix = fmt.Sprintf("  %s  |  %s:%d  |  ", levelFlags[level], filepath.Base(file), line)
 	} else {
-		logPrefix = fmt.Sprintf("  %s  |  ", levelFlags[level])
+		logPrefix = fmt.Sprintf(" %s | %s | ", levelFlags[level], filepath.Base(filepath.Dir(file)))
 	}
 
 	logger.SetPrefix(logPrefix)
