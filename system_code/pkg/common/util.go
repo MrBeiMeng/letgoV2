@@ -104,3 +104,38 @@ func str2int(s string) int {
 func split(str string) []string {
 	return strings.Split(strings.Trim(str, "[]"), ",")
 }
+
+func StringToListNode(s string) *ListNode {
+	s = strings.Trim(s, "[]")     // Remove brackets
+	nums := strings.Split(s, ",") // Split string by comma
+
+	var head, prev *ListNode
+
+	for _, numStr := range nums {
+		num, _ := strconv.Atoi(numStr) // Convert string to integer
+		node := &ListNode{Val: num}
+
+		if head == nil {
+			head = node
+		} else {
+			prev.Next = node
+		}
+		prev = node
+	}
+
+	return head
+}
+
+func ListNodeToString(head *ListNode) string {
+	var sb strings.Builder
+	sb.WriteString("[")
+	for head != nil {
+		sb.WriteString(strconv.Itoa(head.Val)) // Convert integer to string
+		if head.Next != nil {
+			sb.WriteString(",")
+		}
+		head = head.Next
+	}
+	sb.WriteString("]")
+	return sb.String()
+}

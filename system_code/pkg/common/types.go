@@ -18,3 +18,12 @@ func (t *TreeNode) LoadFromStr(str string) error {
 func (t *TreeNode) String() string {
 	return "[" + LevelOrderTraversal(t, true) + "]"
 }
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func (l *ListNode) String() string {
+	return ListNodeToString(l)
+}

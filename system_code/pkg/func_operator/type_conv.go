@@ -7,7 +7,6 @@ import (
 	"letgoV2/system_code/pkg/logging"
 	"reflect"
 	"strconv"
-	"strings"
 )
 
 // 将字符串类型转为golang类型
@@ -39,8 +38,10 @@ func convStr2TypeValue(strParam string, typeOf reflect.Type) (error, reflect.Val
 		}
 		result = reflect.ValueOf(finalBool)
 	case reflect.Slice, reflect.Array:
-		trimStrParam := strings.Trim(strParam, "[]")
-		dataList := strings.Split(trimStrParam, ",")
+		err, dataList := PeelOffALayer(strParam)
+		if err != nil {
+			return err, reflect.Value{}
+		}
 		elemType := typeOf.Elem()
 		result = reflect.MakeSlice(typeOf, len(dataList), len(dataList))
 
@@ -58,6 +59,11 @@ func convStr2TypeValue(strParam string, typeOf reflect.Type) (error, reflect.Val
 			result = reflect.ValueOf(common.StrToBinaryTree(strParam))
 			break
 		}
+		if typeOf == reflect.TypeOf(&common.ListNode{}) {
+			result = reflect.ValueOf(common.StringToListNode(strParam))
+			break
+		}
+
 		fallthrough
 
 	case reflect.Struct:
@@ -65,6 +71,11 @@ func convStr2TypeValue(strParam string, typeOf reflect.Type) (error, reflect.Val
 			result = reflect.ValueOf(*common.StrToBinaryTree(strParam))
 			break
 		}
+		if typeOf == reflect.TypeOf(common.ListNode{}) {
+			result = reflect.ValueOf(*common.StringToListNode(strParam))
+			break
+		}
+
 		fallthrough
 
 	default:
