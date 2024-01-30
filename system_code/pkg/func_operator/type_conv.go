@@ -7,6 +7,7 @@ import (
 	"letgoV2/system_code/pkg/logging"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 // 将字符串类型转为golang类型
@@ -46,12 +47,24 @@ func convStr2TypeValue(strParam string, typeOf reflect.Type) (error, reflect.Val
 		result = reflect.MakeSlice(typeOf, len(dataList), len(dataList))
 
 		for i, strData := range dataList {
-			err, value := convStr2TypeValue(strData, elemType)
-			if err != nil {
-				return err, reflect.Value{}
-			}
+			switch elemType.Kind() {
+			case reflect.Slice, reflect.Array, reflect.Pointer, reflect.Struct:
+				err, value := convStr2TypeValue(strData, elemType)
+				if err != nil {
+					return err, reflect.Value{}
+				}
 
-			result.Index(i).Set(value)
+				result.Index(i).Set(value)
+			default:
+				for _, element := range strings.Split(strData, ",") {
+					err, value := convStr2TypeValue(string(element), elemType)
+					if err != nil {
+						return err, reflect.Value{}
+					}
+
+					result.Index(i).Set(value)
+				}
+			}
 		}
 
 	case reflect.Pointer:
@@ -103,9 +116,13 @@ func convTypeValue2Str(value reflect.Value) (error, string) {
 		return nil, strconv.FormatFloat(value.Float(), 'f', -1, 64)
 	case reflect.Bool:
 		return nil, strconv.FormatBool(value.Bool())
-
 	case reflect.Slice, reflect.Array:
-		return nil, fmt.Sprintf("%v", value)
+		arr, err := ConvertToArr(value)
+		if err != nil {
+			logging.Warn(err)
+			return nil, fmt.Sprintf("%v", value)
+		}
+		return nil, fmt.Sprintf("%v", arr)
 	default:
 		// 如果无法处理的类型，返回空字符串或者进行其他处理
 		return nil, fmt.Sprintf("%v", value)

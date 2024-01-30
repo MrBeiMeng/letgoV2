@@ -129,13 +129,16 @@ func StringToListNode(s string) *ListNode {
 func ListNodeToString(head *ListNode) string {
 	var sb strings.Builder
 	sb.WriteString("[")
-	for head != nil {
-		sb.WriteString(strconv.Itoa(head.Val)) // Convert integer to string
-		if head.Next != nil {
-			sb.WriteString(",")
+	if head != nil && head.Val != 0 {
+		for head != nil {
+			sb.WriteString(strconv.Itoa(head.Val)) // Convert integer to string
+			if head.Next != nil {
+				sb.WriteString(",")
+			}
+			head = head.Next
 		}
-		head = head.Next
 	}
+
 	sb.WriteString("]")
 	return sb.String()
 }

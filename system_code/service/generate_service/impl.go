@@ -1,9 +1,14 @@
 package generate_service
 
 import (
+	"fmt"
+	"io/ioutil"
+	"letgoV2/system_code/pkg/logging"
 	"letgoV2/system_code/pkg/setting"
 	"letgoV2/system_code/pkg/util"
+	"os"
 	"path"
+	"strings"
 )
 
 type GenerateServiceImpl struct {
@@ -25,7 +30,8 @@ func (g *GenerateServiceImpl) GenerateFiles(param CombinedFileParams) (err error
 		return
 	}
 
-	err, dirName := GetNewDirName(lastId+1, param.TitleSlug)
+	newDirId := lastId + 1
+	err, dirName := GetNewDirName(newDirId, param.TitleSlug)
 	if err != nil {
 		return
 	}
@@ -44,7 +50,7 @@ func (g *GenerateServiceImpl) GenerateFiles(param CombinedFileParams) (err error
 	}
 	fileContentMap[fileName2] = fileContent2
 
-	err, fileContent3, fileName3 := getSnippetFileMetaDataDGo(*NewFileMetaData(dirName, param.JsonExampleTestcases))
+	err, fileContent3, fileName3 := getSnippetFileMetaDataDGo(*NewFileMetaData(dirName, param.JsonExampleTestcases, param.GoCodeSnippet, newDirId))
 	if err != nil {
 		return
 	}
@@ -62,6 +68,23 @@ func (g *GenerateServiceImpl) GenerateFiles(param CombinedFileParams) (err error
 	}
 	fileContentMap[fileName5] = fileContent5
 
+	err, funName := getOneFuncName(param.GoCodeSnippet)
+	if err != nil {
+		logging.Error(err)
+	}
+
+	// 创建tests文件夹
+	dir, _ := os.Getwd()
+	testDir := path.Join(dir, fmt.Sprintf("system_code/pkg/tests/%s", CamelToSnake(funName)))
+	err = util.CreateFolder(testDir)
+	if err != nil {
+		logging.Error()
+	}
+
+	if _, err := os.Stat(path.Join(testDir, "test.go")); err != nil {
+		createTestDGo(funName, err, testDir)
+	}
+
 	// 创建文件保存内容
 	err = util.CreateFolder(baseDirPath)
 	if err != nil {
@@ -76,5 +99,39 @@ func (g *GenerateServiceImpl) GenerateFiles(param CombinedFileParams) (err error
 		}
 	}
 
+	filePath := path.Join(basePath, "enter.go")
+	fileContent, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		fmt.Println("无法读取文件:", err)
+		return
+	}
+
+	fileContent = []byte(strings.ReplaceAll(string(fileContent), "\n)", fmt.Sprintf("\n\t_ \"letgoV2/your_code/%s\"\n)", dirName)))
+
+	err = util.CreateAndWriteToFile(filePath, string(fileContent))
+	if err != nil {
+		panic(err)
+	}
+
 	return nil
+}
+
+func createTestDGo(funName string, err error, testDir string) {
+	fileContent6 := `package ${CamelFuncName}
+
+import "letgoV2/system_code/service/code_handle_service/code_handle_params"
+
+var (
+	Tests = []code_handle_params.Test{ // 如果您愿意，感谢您将自己编写的Test提交到远程仓库中，这会帮到很多人。
+		//{TestStr: "", CorrectResult: nil,ShowWhenErr: "you made a mistake --by githubName"},
+	}
+)
+`
+
+	fileContent6 = strings.ReplaceAll(fileContent6, "${CamelFuncName}", CamelToSnake(funName))
+
+	err = util.CreateAndWriteToFile(path.Join(testDir, "test.go"), fileContent6)
+	if err != nil {
+		logging.Error(err)
+	}
 }

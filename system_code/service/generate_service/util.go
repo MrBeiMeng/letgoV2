@@ -1,6 +1,7 @@
 package generate_service
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"go/ast"
@@ -14,6 +15,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 // 这个util负责计数文件夹，创建文件夹
@@ -393,4 +395,22 @@ import (
 
 	snippet = strings.ReplaceAll(snippet, replaceFlag, importSnippet)
 	return snippet
+}
+
+func CamelToSnake(camelCase string) string {
+	var buffer bytes.Buffer
+	for i, char := range camelCase {
+		// Check if the character is uppercase
+		if unicode.IsUpper(char) {
+			// Insert underscore before the uppercase character
+			if i > 0 {
+				buffer.WriteRune('_')
+			}
+			// Convert the uppercase character to lowercase
+			char = unicode.ToLower(char)
+		}
+		// Append the character to the result buffer
+		buffer.WriteRune(char)
+	}
+	return buffer.String()
 }
