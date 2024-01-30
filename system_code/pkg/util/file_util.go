@@ -13,6 +13,11 @@ func CreateAndWriteToFile(fileName string, content string) error {
 		return fmt.Errorf("文件名和内容不能为空")
 	}
 
+	if _, err := os.Stat(fileName); err == nil {
+		// 文件夹已经存在，记录警告信息
+		logging.Warn(fmt.Sprintf("文件[%s]已经存在", fileName))
+	}
+
 	//  使用ioutil.WriteFile创建文件并写入内容，如果出现错误则返回错误
 	bitContent := []byte(content)
 	err := ioutil.WriteFile(fileName, bitContent, 0644)

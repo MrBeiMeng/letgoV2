@@ -24,6 +24,6 @@ type ListNode struct {
 	Next *ListNode
 }
 
-func (l *ListNode) String() string {
-	return ListNodeToString(l)
+func (l ListNode) String() string {
+	return ListNodeToString(&l)
 }

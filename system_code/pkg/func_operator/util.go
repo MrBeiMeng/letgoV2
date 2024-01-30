@@ -96,9 +96,9 @@ func PeelOffALayer(strParams string) (error, []string) {
 			builder.WriteRune(subRune)
 		}
 		if subRune == '[' {
-			if countDeep > 0 {
-				builder.WriteRune(subRune)
-			}
+
+			builder.WriteRune(subRune)
+
 			countDeep += 1
 			continue
 		}

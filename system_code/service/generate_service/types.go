@@ -1,6 +1,8 @@
 package generate_service
 
 import (
+	"encoding/json"
+	"fmt"
 	"letgoV2/system_code/pkg/logging"
 	"letgoV2/system_code/pkg/util"
 	"strings"
@@ -46,30 +48,53 @@ func newFileCodeTestParam(packageName string, goCodeSnippet string) *fileCodeTes
 }
 
 type FileMetaData struct {
-	PackageName string `replace:"packageName"`
-	SampleTests string `replace:"sampleTests"`
+	PackageName       string `replace:"packageName"`
+	SampleTests       string `replace:"sampleTests"`
+	UnderlineFuncName string `replace:"underlineFuncName"`
+	Tests             string `replace:"tests"`
+	DirId             string `replace:"dirId"`
+	FuncName          string `replace:"funcName"`
 }
 
-func NewFileMetaData(packageName string, jsonExampleTestcases string) *FileMetaData {
+func NewFileMetaData(packageName string, jsonExampleTestcases string, goCodeSnippet string, dirNum uint32) *FileMetaData {
+
+	err, dirId := ConvInt2zzza(dirNum)
+	if err != nil {
+		logging.Error(err)
+	}
+
+	err, funName := getOneFuncName(goCodeSnippet)
+	if err != nil {
+		logging.Error(err)
+	}
 
 	trimTestsStr := strings.Trim(jsonExampleTestcases, "[]")
 	lineTestsStr := strings.ReplaceAll(trimTestsStr, "\n", "\\n")
 
-	//args := make([]string, 0)
-	//
-	//err := json.Unmarshal([]byte(jsonExampleTestcases), &args)
-	//if err != nil {
-	//	logging.Error(err)
-	//}
-	//for i := range args {
-	//	if strings.Contains(args[i], "\"") {
-	//		continue
-	//	}
-	//	args[i] = fmt.Sprintf("`%s`", args)
-	//}
-	//
-	//return &FileMetaData{PackageName: packageName, SampleTests: strings.Join(args, ",")}
-	return &FileMetaData{PackageName: packageName, SampleTests: lineTestsStr}
+	tests := make([]string, 0)
+	trimed := strings.ReplaceAll(jsonExampleTestcases, "\\\"", "")
+	err = json.Unmarshal([]byte(trimed), &tests)
+	if err != nil {
+		panic(err)
+	}
+
+	testStr := strings.Builder{}
+	for i, test := range tests {
+		if i > 0 {
+			testStr.WriteString("\t\t")
+		}
+		TestStructStr := fmt.Sprintf("{TestStr: \"%s\", CorrectResult: nil},\n", strings.ReplaceAll(test, "\n", "\\n"))
+		testStr.WriteString(TestStructStr)
+	}
+
+	return &FileMetaData{
+		PackageName:       packageName,
+		SampleTests:       lineTestsStr,
+		UnderlineFuncName: CamelToSnake(funName),
+		Tests:             testStr.String(),
+		DirId:             dirId,
+		FuncName:          funName,
+	}
 }
 
 type fileReadMeEnParam struct {
