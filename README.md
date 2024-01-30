@@ -5,6 +5,15 @@
 
 ----
 
+## 📌功能
+
+- 一键代码模板下载
+- 和官网一致的测试用例
+- IDE debug
+- 命令行测试
+
+
+
 ## 🚀快速开始
 
 > 1 请先准备好:
@@ -20,7 +29,7 @@
 > 3.2 [准备好leetcode cookie并修改conf.yaml](system_code/doc/leetcode_cookie.md)
 >
 > 4 letgo down -i 题目ID
-> 
+>
 > <img src="system_code/doc/letgo_down.gif" alt="ss" title="yes" style="zoom: 80%;" />
 
 ## 🔎项目结构
@@ -67,6 +76,17 @@
 
 ```
 
+
+
+## 🥳加入讨论
+
+## ![letgoV2群二维码](https://ccurj.oss-cn-beijing.aliyuncs.com/picgoletgoV2%E7%BE%A4%E4%BA%8C%E7%BB%B4%E7%A0%81.png) 欢迎加入QQ群一起聊天，提意见，加需求
+
+
+
 ## 📢📣 声明
 
 本项目遵循 [GPL-3.0 License](https://github.com/liuyunfz/chaoxing_tool/blob/master/LICENSE) ，仅作为学习途径使用，请勿用于商业用途或破坏他人的知识产权
+
+
+
