@@ -56,13 +56,15 @@ func convStr2TypeValue(strParam string, typeOf reflect.Type) (error, reflect.Val
 
 				result.Index(i).Set(value)
 			default:
-				for _, element := range strings.Split(strData, ",") {
+				splits := strings.Split(strData, ",")
+				result = reflect.MakeSlice(typeOf, len(splits), len(splits))
+				for j, element := range splits {
 					err, value := convStr2TypeValue(string(element), elemType)
 					if err != nil {
 						return err, reflect.Value{}
 					}
 
-					result.Index(i).Set(value)
+					result.Index(j).Set(value)
 				}
 			}
 		}

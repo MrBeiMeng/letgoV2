@@ -85,7 +85,7 @@ import (
 var (
 	// sampleTests 是为了您在编写函数时debug
 	sampleTests = []string{
-		${sampleTests},
+		${sampleTests}
 	}
 )
 

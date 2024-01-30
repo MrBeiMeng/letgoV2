@@ -1,4 +1,4 @@
-package IDzzyz_longest_substring_without_repeating_characters
+package IDzzzz_two_sum
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_lengthOfLongestSubstring(t *testing.T) {
+func Test_twoSum(t *testing.T) {
 
 	for i, sampleTest := range sampleTests { // 你可以从meta_data.go 中找到测试集合
 		t.Run(fmt.Sprintf("CASE %d", i+1), func(t *testing.T) {
@@ -19,13 +19,13 @@ func Test_lengthOfLongestSubstring(t *testing.T) {
 				}
 			}()
 
-			err, result := func_operator.RunFunc(lengthOfLongestSubstring, sampleTest)
+			err, result := func_operator.RunFunc(twoSum, sampleTest)
 			if err != nil {
 				logging.Error(err)
 				t.Error(err.Error())
 			}
 
-			logging.Info(fmt.Sprintf("lengthOfLongestSubstring(%s) = %v \n", sampleTest, result))
+			logging.Info(fmt.Sprintf("longestPalindrome(%s) = %v ", sampleTest, result))
 		})
 	}
 

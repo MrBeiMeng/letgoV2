@@ -68,9 +68,6 @@ func NewFileMetaData(packageName string, jsonExampleTestcases string, goCodeSnip
 		logging.Error(err)
 	}
 
-	trimTestsStr := strings.Trim(jsonExampleTestcases, "[]")
-	lineTestsStr := strings.ReplaceAll(trimTestsStr, "\n", "\\n")
-
 	tests := make([]string, 0)
 	trimed := strings.ReplaceAll(jsonExampleTestcases, "\\\"", "")
 	err = json.Unmarshal([]byte(trimed), &tests)
@@ -79,17 +76,19 @@ func NewFileMetaData(packageName string, jsonExampleTestcases string, goCodeSnip
 	}
 
 	testStr := strings.Builder{}
+	lineTestsStr := strings.Builder{}
 	for i, test := range tests {
 		if i > 0 {
 			testStr.WriteString("\t\t")
 		}
-		TestStructStr := fmt.Sprintf("{TestStr: \"%s\", CorrectResult: nil},\n", strings.ReplaceAll(test, "\n", "\\n"))
-		testStr.WriteString(TestStructStr)
+		singleTestStr := strings.ReplaceAll(test, "\n", "\\n")
+		testStr.WriteString(fmt.Sprintf("{TestStr: \"%s\", CorrectResult: nil},\n", singleTestStr))
+		lineTestsStr.WriteString(fmt.Sprintf("\"%s\",", singleTestStr))
 	}
 
 	return &FileMetaData{
 		PackageName:       packageName,
-		SampleTests:       lineTestsStr,
+		SampleTests:       lineTestsStr.String(),
 		UnderlineFuncName: CamelToSnake(funName),
 		Tests:             testStr.String(),
 		DirId:             dirId,
