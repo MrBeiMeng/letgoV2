@@ -30,8 +30,8 @@ var runCmd = &cobra.Command{
 			for {
 				select {
 				case r := <-reportChan:
-
 					fmt.Printf("%+v\n", strings.ReplaceAll(fmt.Sprintf("%+v", r), "\n", "\\n"))
+					fmt.Printf("时长:%s", r.GetDuration())
 					countDone += 1
 				default:
 					fmt.Printf("loading \n")

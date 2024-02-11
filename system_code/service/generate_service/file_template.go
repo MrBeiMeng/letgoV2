@@ -94,7 +94,7 @@ func init() {
 	// 与sampleTests不同，这里的Test将在您使用命令行RUN时被调用，
 	// tests 是为了写好函数后统一测试
 	tests := []code_handle_params.Test{
-		//{TestStr: "", CorrectResult: nil,ShowWhenErr: "you made a mistake --by githubName"},
+		//{TestStr: "", ResultChecker: nil,ShowWhenErr: "you made a mistake --by githubName"},
 		${tests}
 	}
 

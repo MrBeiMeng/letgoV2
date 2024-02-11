@@ -18,9 +18,10 @@ func init() {
 	// 与sampleTests不同，这里的Test将在您使用命令行RUN时被调用，
 	// tests 是为了写好函数后统一测试
 	tests := []code_handle_params.Test{
-		//{TestStr: "", CorrectResult: nil,ShowWhenErr: "you made a mistake --by githubName"},
-		{TestStr: "[2,7,11,15]\n9", CorrectResult: nil},
-		{TestStr: "[3,2,4]\n6", CorrectResult: nil},
+		//{TestStr: "", ResultChecker: nil,ShowWhenErr: "you made a mistake --by githubName"},
+		{TestStr: "[2,7,11,15]\n9", CorrectResult: "@multiset[1,0]"},
+		//{TestStr: "[3,2,4]\n6", CorrectResult: nil},
+		{TestStr: "[3,2,4]\n6", CorrectResult: "@multiset[1,2]"},
 		{TestStr: "[3,3]\n6", CorrectResult: nil},
 	}
 

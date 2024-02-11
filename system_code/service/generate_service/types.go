@@ -82,7 +82,7 @@ func NewFileMetaData(packageName string, jsonExampleTestcases string, goCodeSnip
 			testStr.WriteString("\t\t")
 		}
 		singleTestStr := strings.ReplaceAll(test, "\n", "\\n")
-		testStr.WriteString(fmt.Sprintf("{TestStr: \"%s\", CorrectResult: nil},\n", singleTestStr))
+		testStr.WriteString(fmt.Sprintf("{TestStr: \"%s\", ResultChecker: nil},\n", singleTestStr))
 		lineTestsStr.WriteString(fmt.Sprintf("\"%s\",", singleTestStr))
 	}
 
