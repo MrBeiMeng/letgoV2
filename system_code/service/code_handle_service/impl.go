@@ -1,21 +1,26 @@
 package code_handle_service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/fs"
+	"io/ioutil"
 	"letgoV2/system_code/pkg/common"
 	"letgoV2/system_code/pkg/func_operator"
 	"letgoV2/system_code/service/code_handle_service/code_handle_params"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"time"
 )
 
 type Test struct {
-	TestStr       string
-	ResultChecker common.CheckDataStruct
-	CorrectResult code_handle_params.String
-	ShowWhenErr   string
+	TestStr       string                    `json:"testStr"`
+	ResultChecker common.CheckDataStruct    `json:"resultChecker"`
+	CorrectResult code_handle_params.String `json:"correctResult"`
+	ShowWhenErr   string                    `json:"showWhenErr"`
 }
 
 type UniqueTests map[string]Test
@@ -59,8 +64,18 @@ func (u *UniqueTests) UpsertTests(tests ...code_handle_params.Test) error {
 }
 
 type CodeHandleServiceImpl struct {
-	FuncMap map[string]interface{}
-	TestMap map[string]UniqueTests
+	FuncMap     map[string]interface{}
+	TestMap     map[string]UniqueTests
+	TestDirPath map[string]string
+}
+
+func (c *CodeHandleServiceImpl) SignInTestFile(dirId, dirPath string) error {
+	c.initWhenFirst()
+	// 注册文件夹路径，运行时动态加载所有测试用例
+
+	c.TestDirPath[dirId] = dirPath
+
+	return nil
 }
 
 func (c *CodeHandleServiceImpl) initWhenFirst() {
@@ -70,6 +85,10 @@ func (c *CodeHandleServiceImpl) initWhenFirst() {
 
 	if c.TestMap == nil {
 		c.TestMap = make(map[string]UniqueTests)
+	}
+
+	if c.TestDirPath == nil {
+		c.TestDirPath = make(map[string]string)
 	}
 
 }
@@ -155,6 +174,31 @@ func (c *CodeHandleServiceImpl) AutoRun(dirId string, reportChan chan<- code_han
 	resultMap = make(map[string]time.Time)
 
 	tests := c.TestMap[dirId]
+	// 需要扩城一下tests
+	dirPath := c.TestDirPath[dirId]
+
+	filepath.WalkDir(dirPath, func(tempPathStr string, d fs.DirEntry, err error) error {
+		_, fileName := filepath.Split(tempPathStr)
+
+		tempTests := make([]code_handle_params.Test, 0)
+		if filepath.Ext(fileName) == ".json" {
+			open, err := os.Open(tempPathStr)
+			if err != nil {
+				panic(err.Error())
+			}
+			all, err := ioutil.ReadAll(open)
+			if err != nil {
+				panic(err.Error())
+			}
+			err = json.Unmarshal(all, &tempTests)
+			if err != nil {
+				panic(err.Error())
+			}
+		}
+		err = tests.UpsertTests(tempTests...)
+
+		return nil
+	})
 
 	for _, test := range tests {
 		resultMap[test.TestStr] = c.Run(dirId, test, reportChan)

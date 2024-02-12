@@ -81,9 +81,9 @@ func (g *GenerateServiceImpl) GenerateFiles(param CombinedFileParams) (err error
 		logging.Error()
 	}
 
-	if _, err := os.Stat(path.Join(testDir, "test.go")); err != nil {
-		createTestDGo(funName, err, testDir)
-	}
+	//if _, err := os.Stat(path.Join(testDir, "test.go")); err != nil {
+	//	createTestDGo(funName, err, testDir)
+	//}
 
 	// 创建文件保存内容
 	err = util.CreateFolder(baseDirPath)

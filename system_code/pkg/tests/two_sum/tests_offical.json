@@ -1,0 +1,17 @@
+[
+  {
+    "testStr": "[3,3]\n6",
+    "correctResult": "@multiset[1,0]",
+    "showWhenErr": " --by 官方测试"
+  },
+  {
+    "testStr": "[2,7,11,15]\n9",
+    "correctResult": "@multiset[1,0]",
+    "showWhenErr": " --by 官方测试"
+  },
+  {
+    "testStr": "[3,2,4]\n6",
+    "correctResult": "@multiset[1,2]",
+    "showWhenErr": " --by 官方测试"
+  }
+]

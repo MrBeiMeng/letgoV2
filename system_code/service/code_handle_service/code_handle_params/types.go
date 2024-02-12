@@ -27,9 +27,9 @@ func NewRunResult(dirId string, resultStr string, success bool, err error, pass 
 type String interface{}
 
 type Test struct {
-	TestStr       string
-	CorrectResult String
-	ShowWhenErr   string
+	TestStr       string `json:"testStr"`
+	CorrectResult String `json:"correctResult"`
+	ShowWhenErr   string `json:"showWhenErr"`
 }
 
 type UniqueTests struct {

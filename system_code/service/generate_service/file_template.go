@@ -76,7 +76,6 @@ func getSnippetFileMetaDataDGo(param FileMetaData) (err error, snippet, fileName
 package ${packageName}
 
 import (
-	"letgoV2/system_code/pkg/tests/${underlineFuncName}"
 	"letgoV2/system_code/service/code_handle_service"
 	"letgoV2/system_code/service/code_handle_service/code_handle_params"
 )
@@ -94,12 +93,14 @@ func init() {
 	// 与sampleTests不同，这里的Test将在您使用命令行RUN时被调用，
 	// tests 是为了写好函数后统一测试
 	tests := []code_handle_params.Test{
-		//{TestStr: "", ResultChecker: nil,ShowWhenErr: "you made a mistake --by githubName"},
+		//{TestStr: "", CorrectResult: nil,ShowWhenErr: "you made a mistake --by githubName"},
 		${tests}
 	}
 
 	// 当TestStr在 ${underlineFuncName}.Tests 已经存在时 tests中写的测试用例将会被 ${underlineFuncName}.Tests 中的用例覆盖
-	_ = code_handle_service.CodeHandleService.SignIn("${dirId}", ${funcName}, append(tests, ${underlineFuncName}.Tests...))
+	_ = code_handle_service.CodeHandleService.SignIn("zzzz", ${funcName}, tests)
+	_ = code_handle_service.CodeHandleService.SignInTestFile("zzzz", "system_code/pkg/tests/${underlineFuncName}")
+
 }
 
 `
