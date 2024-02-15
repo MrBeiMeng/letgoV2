@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"letgoV2/system_code/pkg/common"
+	"letgoV2/system_code/pkg/e"
 	"letgoV2/system_code/pkg/func_operator"
 	"letgoV2/system_code/service/code_handle_service/code_handle_params"
 	"os"
@@ -53,6 +54,11 @@ func (u *UniqueTests) UpsertTests(tests ...code_handle_params.Test) error {
 			}
 
 			checker := common.NewString(test.CorrectResult)
+
+			tempTest.ResultChecker = checker
+			tempTest.ShowWhenErr = test.ShowWhenErr
+		} else {
+			checker := common.NewAlwaysPass()
 
 			tempTest.ResultChecker = checker
 			tempTest.ShowWhenErr = test.ShowWhenErr
@@ -146,31 +152,55 @@ func (c *CodeHandleServiceImpl) Run(dirId string, test Test, reportChan chan<- c
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				err := errors.New(fmt.Sprintf("%v", r))
+				err := e.NewLocationErrorHere(fmt.Sprintf("%v", r))
+
 				reportChan <- code_handle_params.NewRunResult(dirId, "", false, err, false, test.TestStr, test.CorrectResult, startTime, time.Now())
 			}
 		}()
 
 		startTime := time.Now()
 		success := true
-		err, resultStr := func_operator.RunFunc(function, test.TestStr)
-		if err != nil {
-			success = false
-		}
-		endTime := time.Now()
+		done := false
 
-		passed := false
-		if test.ResultChecker != nil {
-			passed = test.ResultChecker.Check(resultStr)
+		go func() {
+			err, resultStr := func_operator.RunFunc(function, test.TestStr)
+			if err != nil {
+				success = false
+			}
+			endTime := time.Now()
+
+			passed := false
+			if test.ResultChecker != nil {
+				passed = test.ResultChecker.Check(resultStr)
+			}
+
+			//time.Sleep(time.Minute)
+			reportChan <- code_handle_params.NewRunResult(dirId, resultStr, success, err, passed, test.TestStr, test.CorrectResult, startTime, endTime)
+			done = true
+		}()
+
+		for {
+
+			if done {
+				break
+			}
+
+			// 五秒超时
+			if (time.Now().Sub(startTime)) > time.Second*5 {
+				panic(fmt.Sprintf("函数超时 @test=%s expected=%s", test.TestStr, test.CorrectResult))
+			}
 		}
 
-		reportChan <- code_handle_params.NewRunResult(dirId, resultStr, success, err, passed, test.TestStr, test.CorrectResult, startTime, endTime)
 	}()
 
 	return startTime
 }
 
 func (c *CodeHandleServiceImpl) AutoRun(dirId string, reportChan chan<- code_handle_params.RunResult) (resultMap map[string]time.Time) {
+	if c.FuncMap[dirId] == nil {
+		panic(fmt.Sprintf("没有此文件夹 ID=%s", dirId))
+	}
+
 	resultMap = make(map[string]time.Time)
 
 	tests := c.TestMap[dirId]

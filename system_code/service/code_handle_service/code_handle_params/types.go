@@ -1,6 +1,9 @@
 package code_handle_params
 
 import (
+	"fmt"
+	"letgoV2/system_code/pkg/util"
+	"strings"
 	"time"
 )
 
@@ -14,6 +17,29 @@ type RunResult struct {
 	ExpectedResult String
 	StartTime      time.Time
 	EndTime        time.Time
+}
+
+func (r *RunResult) String() string {
+	if r.Pass {
+		return r.SuccessSprint()
+	}
+
+	return r.FailureSprint()
+}
+
+func (r *RunResult) getTestStr() string {
+
+	return strings.ReplaceAll(r.TestStr, "\n", "\\n")
+}
+
+func (r *RunResult) SuccessSprint() string {
+
+	return fmt.Sprintf("%-9s | %s | test=%-50s | %s", r.GetDuration(), util.SetColor("PASSED", util.GREEN), util.TruncateString(r.getTestStr(), 50), r.ResultStr)
+}
+
+func (r *RunResult) FailureSprint() string {
+
+	return fmt.Sprintf("%s | %s | test=%s | expected=%s | but=%s", r.GetDuration(), util.SetColor("FAIL", util.RED), r.getTestStr(), r.ExpectedResult, r.ResultStr)
 }
 
 func (r *RunResult) GetDuration() time.Duration {

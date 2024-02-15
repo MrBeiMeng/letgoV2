@@ -15,6 +15,7 @@ var downCmd = &cobra.Command{
 	Short: "将目标题目提取到本地 /your_code/下 例如: letgo down -i 88",
 	Long:  `将目标题目提取到本地 /your_code/下 例如: letgo down -i 88`,
 	Run: func(cmd *cobra.Command, args []string) {
+		callingMethod(cmd.Use)
 
 		downService := down_service.DownService
 

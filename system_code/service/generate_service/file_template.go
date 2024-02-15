@@ -98,8 +98,8 @@ func init() {
 	}
 
 	// 当TestStr在 ${underlineFuncName}.Tests 已经存在时 tests中写的测试用例将会被 ${underlineFuncName}.Tests 中的用例覆盖
-	_ = code_handle_service.CodeHandleService.SignIn("zzzz", ${funcName}, tests)
-	_ = code_handle_service.CodeHandleService.SignInTestFile("zzzz", "system_code/pkg/tests/${underlineFuncName}")
+	_ = code_handle_service.CodeHandleService.SignIn("${dirId}", ${funcName}, tests)
+	_ = code_handle_service.CodeHandleService.SignInTestFile("${dirId}", "system_code/pkg/tests/${underlineFuncName}")
 
 }
 

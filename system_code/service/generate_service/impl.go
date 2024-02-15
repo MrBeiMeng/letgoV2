@@ -78,7 +78,7 @@ func (g *GenerateServiceImpl) GenerateFiles(param CombinedFileParams) (err error
 	testDir := path.Join(dir, fmt.Sprintf("system_code/pkg/tests/%s", CamelToSnake(funName)))
 	err = util.CreateFolder(testDir)
 	if err != nil {
-		logging.Error()
+		logging.Error(err)
 	}
 
 	//if _, err := os.Stat(path.Join(testDir, "test.go")); err != nil {

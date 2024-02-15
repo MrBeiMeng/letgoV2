@@ -168,3 +168,11 @@ func NewSplitUtil(strData []byte) *SplitUtil {
 
 	return obj
 }
+
+// TruncateString 函数用于截断过长的字符串，超过指定长度的部分用省略号替代
+func TruncateString(s string, maxLength int) string {
+	if len(s) > maxLength {
+		return s[:maxLength-3] + "..."
+	}
+	return s
+}
