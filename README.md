@@ -5,6 +5,40 @@
 
 ----
 
+
+<!-- TOC -->
+* [🖨️⌨️ letgoV2](#-letgov2)
+  * [快速开始](#快速开始)
+  * [📌功能](#功能)
+  * [🔎项目结构](#项目结构)
+  * [🥳加入讨论](#加入讨论)
+  * [📢📣 声明](#-声明)
+<!-- TOC -->
+
+
+
+## 快速开始
+
+1 使用命令 `letgo down -i ${题号}` 下载代码模板到本地
+
+```shell
+letgo down -i 1
+```
+
+2 使用命令 `letgo run -d ${文件夹ID}` 进行代码测试
+
+```shell
+letgo run -d zzzz
+```
+
+3 使用命令 `letgo remove -d ${文件夹ID}` 删掉不想要的题目文件夹
+
+```shell
+letgo remove -d zzzy
+```
+
+
+
 ## 📌功能
 
 - 一键代码模板下载
@@ -35,20 +69,6 @@
   ![letgo run](system_code/doc/picgoletgo%20run.gif)
 
 
-
-## 🚀快速开始
-
-> 1 请先准备好:
-> - go 环境
-> - 一个你喜欢的IDE
-> - 网络畅通
-> - leetcode 账号
->
-> 2 将代码备份到本地
->
-> 3[准备好leetcode cookie并修改conf.yaml](system_code/doc/leetcode_cookie.md)
->
-> 4 letgo down -i 力扣题号开始刷题
 
 
 
@@ -112,10 +132,10 @@
 </div>
 
 
-
 ## 📢📣 声明
 
-本项目遵循 [GPL-3.0 License](https://github.com/liuyunfz/chaoxing_tool/blob/master/LICENSE) ，仅作为学习途径使用，请勿用于商业用途或破坏他人的知识产权
+本项目遵循 [GPL-3.0 License](https://github.com/liuyunfz/chaoxing_tool/blob/master/LICENSE)
+，仅作为学习途径使用，请勿用于商业用途或破坏他人的知识产权
 
 
 

@@ -101,7 +101,7 @@ func GetLastDirID() (error, uint32) {
 		return nil
 	})
 
-	var maxId uint32 = 1
+	var maxId uint32 = 0
 	var lastDir string
 
 	for _, dirName := range dNameList {
