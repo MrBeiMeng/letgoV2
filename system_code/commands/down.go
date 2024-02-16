@@ -25,7 +25,7 @@ var downCmd = &cobra.Command{
 
 			err := downService.DownById(downParam.ID)
 			if err != nil {
-				logging.Info(err.Error())
+				logging.Error(err.Error())
 			}
 
 			return

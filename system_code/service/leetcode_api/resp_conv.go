@@ -108,7 +108,7 @@ func convTitleSlugFromResp(resp []byte) (error, string) {
 		return errors.New(errStr), ""
 	}
 
-	if len(userRecordsResp.Data.LatestUserRecords.DailyQuestion) < 0 {
+	if len(userRecordsResp.Data.LatestUserRecords.DailyQuestion) <= 0 {
 		errStr := fmt.Sprintf("userRecordsResp.Data.LatestUserRecords.DailyQuestion.len = 0 这个接口影响的代码非常多，意味着你要改很多代码了。[:)]")
 
 		logging.Error(errStr)

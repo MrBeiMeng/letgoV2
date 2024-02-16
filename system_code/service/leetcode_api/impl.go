@@ -105,7 +105,7 @@ func (l *LeetCodeApiImpl) SearchTitleSlugByQuestionId(questionId string) (error,
 	postBody := GetSearchTitleSlugByQuestionIdReqBody(questionId)
 	err, resp := LeetcodeHttpPost(`https://leetcode.cn/graphql/`, postBody)
 	if err != nil {
-		return nil, ""
+		return err, ""
 	}
 
 	err, titleSlug := convTitleSlugFromResp(resp)
