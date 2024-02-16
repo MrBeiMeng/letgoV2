@@ -7,37 +7,41 @@
 
 
 <!-- TOC -->
+
 * [🖨️⌨️ letgoV2](#-letgov2)
-  * [快速开始](#快速开始)
-  * [📌功能](#功能)
-  * [🔎项目结构](#项目结构)
-  * [🥳加入讨论](#加入讨论)
-  * [📢📣 声明](#-声明)
+    * [快速开始](#快速开始)
+    * [📌功能](#功能)
+    * [🔎项目结构](#项目结构)
+    * [🥳加入讨论](#加入讨论)
+    * [📢📣 声明](#-声明)
+
 <!-- TOC -->
-
-
 
 ## 快速开始
 
-1 使用命令 `letgo down -i ${题号}` 下载代码模板到本地
+1 使用命令 `letgo down -i ${题号}` 配置cookie
+
+```shell
+letgo config --cookies "你的cookie"
+```
+
+2 使用命令 `letgo down -i ${题号}` 下载代码模板到本地
 
 ```shell
 letgo down -i 1
 ```
 
-2 使用命令 `letgo run -d ${文件夹ID}` 进行代码测试
+3 使用命令 `letgo run -d ${文件夹ID}` 进行代码测试
 
 ```shell
 letgo run -d zzzz
 ```
 
-3 使用命令 `letgo remove -d ${文件夹ID}` 删掉不想要的题目文件夹
+4 使用命令 `letgo remove -d ${文件夹ID}` 删掉不想要的题目文件夹
 
 ```shell
 letgo remove -d zzzy
 ```
-
-
 
 ## 📌功能
 
@@ -67,10 +71,6 @@ letgo remove -d zzzy
 - 命令行测试
 
   ![letgo run](system_code/doc/picgoletgo%20run.gif)
-
-
-
-
 
 ## 🔎项目结构
 
@@ -123,14 +123,11 @@ letgo remove -d zzzy
 
 ```
 
-
-
 ## 🥳加入讨论
 
 <div style="margin: 0 200px">
 <img src="https://ccurj.oss-cn-beijing.aliyuncs.com/picgoimage-20240130184904456.png" alt="image-20240130184904456" style="zoom: 50%;" />
 </div>
-
 
 ## 📢📣 声明
 
