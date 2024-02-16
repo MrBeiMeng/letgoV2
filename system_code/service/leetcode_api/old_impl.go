@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"letgoV2/system_code/pkg/logging"
-	"letgoV2/system_code/pkg/setting"
 	"letgoV2/system_code/pkg/util"
+	"letgoV2/system_code/pkg/util/config_util"
 	"letgoV2/system_code/service/leetcode_api/leetcode_bodys"
 )
 
@@ -54,8 +54,9 @@ func (l *LeetCodeApiImpl) SearchQuestionSampleTestInfoByTitleSlug(titleSlug stri
 
 func (l *LeetCodeApiImpl) SearchQuestionByTitleSlug(titleSlug string) (error, leetcode_bodys.GraphqlResp) {
 	// 模拟请求
-	headerMap := setting.LeetCodeConf.HeaderMap
-	cookies := setting.LeetCodeConf.Cookies
+	headerMap := getHeaderMap()
+	fieldLeetcode := config_util.Fields("Leetcode")
+	cookies := fieldLeetcode.Get("Cookies")
 
 	// 请求体
 	postBody := fmt.Sprintf(`{"query":"\n    query questionEditorData($titleSlug: String!) {\n  question(titleSlug: $titleSlug) {\n    questionId\n    questionFrontendId\n    codeSnippets {\n      lang\n      langSlug\n      code\n    }\n    envInfo\n    enableRunCode\n    hasFrontendPreview\n    frontendPreviews\n  }\n}\n    ","variables":{"titleSlug":"%s"},"operationName":"questionEditorData"}`, titleSlug)

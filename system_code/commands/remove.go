@@ -18,66 +18,80 @@ var removeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		callingMethod(cmd.Use)
 
-		if removeParam.DirId != "" {
-			if strings.Contains(removeParam.DirId, "zzzz") {
-				logging.Warn("零号文件夹仅用来示例，请不要删除。可能导致错误")
+		deletedingId := ""
+
+		deletedingId = removeParam.DirId
+
+		if removeParam.DirId == "" {
+			err, lastId := util.GetLastDirID()
+			if err != nil {
+				panic(err.Error())
+			}
+
+			err, lastIdStr := util.ConvInt2zzza(lastId)
+			if err != nil {
+				panic(err.Error())
+			}
+			deletedingId = lastIdStr
+		}
+
+		if strings.Contains(deletedingId, "zzzz") {
+			logging.Warn("零号文件夹仅用来示例，请不要删除。可能导致错误")
+			return
+		}
+
+		dirPath := util.SearchDir(deletedingId, "your_code")
+
+		if !removeParam.Confirm {
+			logging.Warn(fmt.Sprintf("将删除%s文件夹以及其所有文件 [Y/n]", dirPath))
+			input := ""
+
+			fmt.Scanln(&input)
+			if !strings.Contains(strings.ToLower(strings.TrimSpace(input)), "y") {
+
+				logging.Info("用户取消")
+
 				return
 			}
-
-			dirPath := util.SearchDir(removeParam.DirId, "your_code")
-
-			if !removeParam.Confirm {
-				logging.Warn(fmt.Sprintf("将删除%s文件夹以及其所有文件 [Y/n]", dirPath))
-				input := ""
-
-				fmt.Scanln(&input)
-				if !strings.Contains(strings.ToLower(strings.TrimSpace(input)), "y") {
-
-					logging.Info("用户取消")
-
-					return
-				}
-
-			}
-
-			// 寻找包含dirId 的文件夹
-			// 删除所有文件夹
-			// 删除enter.go 中的行
-
-			err := os.RemoveAll(dirPath)
-			if err != nil {
-				logging.Error(err)
-				return
-			}
-
-			logging.Warn(fmt.Sprintf("已删除%s", dirPath))
-
-			dir, _ := os.Getwd()
-			enterGoPath := filepath.Join(dir, "your_code/enter.go")
-			bytes, err := os.ReadFile(enterGoPath)
-			if err != nil {
-				logging.Error(err)
-			}
-
-			str := fmt.Sprintf("%s", bytes)
-
-			lines := strings.Split(str, "\n")
-
-			file, err := os.OpenFile(enterGoPath, os.O_RDWR, os.ModePerm)
-			if err != nil {
-				panic(err)
-			}
-
-			file.Truncate(0)
-			for _, line := range lines {
-				if !strings.Contains(line, removeParam.DirId) && line != "\n" {
-					file.Write([]byte(fmt.Sprintf("%s\n", line)))
-				}
-			}
-
-			logging.Warn(fmt.Sprintf("已重写%s", enterGoPath))
 
 		}
+
+		// 寻找包含dirId 的文件夹
+		// 删除所有文件夹
+		// 删除enter.go 中的行
+
+		err := os.RemoveAll(dirPath)
+		if err != nil {
+			logging.Error(err)
+			return
+		}
+
+		logging.Warn(fmt.Sprintf("已删除%s", dirPath))
+
+		dir, _ := os.Getwd()
+		enterGoPath := filepath.Join(dir, "your_code/enter.go")
+		bytes, err := os.ReadFile(enterGoPath)
+		if err != nil {
+			logging.Error(err)
+		}
+
+		str := fmt.Sprintf("%s", bytes)
+
+		lines := strings.Split(str, "\n")
+
+		file, err := os.OpenFile(enterGoPath, os.O_RDWR, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+
+		file.Truncate(0)
+		for _, line := range lines {
+			if !strings.Contains(line, deletedingId) && line != "\n" {
+				file.Write([]byte(fmt.Sprintf("%s\n", line)))
+			}
+		}
+
+		logging.Warn(fmt.Sprintf("已重写%s", enterGoPath))
 
 	},
 }

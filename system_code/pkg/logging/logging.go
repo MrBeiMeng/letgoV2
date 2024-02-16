@@ -4,21 +4,37 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"letgoV2/system_code/pkg/e"
+	"letgoV2/system_code/pkg/util/config_util"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type Level int
 
 var (
-	F      *os.File
 	logger *logrus.Logger
 )
 
 func init() {
-	filePath := GetLogFileFullPath(getLogFilePath())
-	F = OpenLogFile(filePath)
+	// 可能有多种不同的启动位置
+	dir, _ := os.Getwd()
+
+	logPath := filepath.Join(dir, "", "")
+
+	logName := fmt.Sprintf("%s%s.%s", "log", time.Now().Format("20060102"), "log")
+	if strings.Contains(dir, "your_code") {
+		logPath = filepath.Join(dir, "./logs", logName)
+	} else {
+		logPath = filepath.Join(dir, config_util.Fields("Log").Get("Dir"), "logs", logName)
+	}
+
+	F, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	//multiWriter := io.MultiWriter(os.Stdout, F)
 
@@ -55,22 +71,6 @@ func init() {
 		CallerPrettyfier:  nil,
 		PrettyPrint:       false,
 	})
-
-	//// 示例日志记录
-	//logger.WithFields(logrus.Fields{
-	//	"animal": "walrus",
-	//	"size":   10,
-	//}).Info("A group of walrus emerges from the ocean")
-
-	//// 如果连接了TTY，启用颜色
-	//if isTerminal() {
-	//	logrus.SetFormatter(&logrus.TextFormatter{
-	//		ForceColors:   true,
-	//		FullTimestamp: true,
-	//	})
-	//} else {
-	//	logrus.SetFormatter(&logrus.JSONFormatter{})
-	//}
 
 }
 

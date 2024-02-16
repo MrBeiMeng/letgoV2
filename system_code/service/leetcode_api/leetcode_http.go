@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"letgoV2/system_code/pkg/setting"
 	"letgoV2/system_code/pkg/util"
+	"letgoV2/system_code/pkg/util/config_util"
 	"strings"
 )
 
@@ -22,8 +22,11 @@ type ErrorBody struct {
 func LeetcodeHttpPost(url string, reqBody string) (error, []byte) {
 
 	// 模拟请求
-	headerMap := setting.LeetCodeConf.HeaderMap
-	cookies := setting.LeetCodeConf.Cookies
+
+	fieldLeetcode := config_util.Fields("Leetcode")
+	headerMap := getHeaderMap()
+
+	cookies := fieldLeetcode.Get("Cookies")
 
 	err, bytes := util.HttpPost(url, cookies, headerMap, reqBody)
 	if err != nil {

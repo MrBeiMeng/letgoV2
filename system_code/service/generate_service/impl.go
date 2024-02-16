@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"letgoV2/system_code/pkg/logging"
-	"letgoV2/system_code/pkg/setting"
 	"letgoV2/system_code/pkg/util"
+	"letgoV2/system_code/pkg/util/config_util"
 	"os"
 	"path"
 	"strings"
@@ -21,11 +21,11 @@ type GenerateServiceImpl struct {
 // 生成 code_test.go 文件
 // 生成 meta_data.go 文件
 func (g *GenerateServiceImpl) GenerateFiles(param CombinedFileParams) (err error) {
-	basePath := setting.CodePlace
+	basePath := config_util.Get("CodePlace")
 	fileContentMap := make(map[string]string)
 
 	// 获取最后的ID，接下来生成的ID加一
-	err, lastId := GetLastDirID()
+	err, lastId := util.GetLastDirID()
 	if err != nil {
 		return
 	}

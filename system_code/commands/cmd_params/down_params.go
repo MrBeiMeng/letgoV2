@@ -9,3 +9,10 @@ type RemoveParam struct {
 	DirId   string
 	Confirm bool
 }
+
+type SetParam struct {
+	Set     string
+	Show    string
+	Cookies string
+	Confirm bool
+}

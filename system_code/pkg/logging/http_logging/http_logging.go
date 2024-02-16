@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"letgoV2/system_code/pkg/setting"
+	"letgoV2/system_code/pkg/util/config_util"
 	"log"
 	"net/http"
 	"os"
@@ -30,7 +30,7 @@ var (
 
 func getHttpLogFilePath() string {
 
-	logDir := setting.LogDir
+	logDir := config_util.Fields("Log").Get("Dir")
 
 	fullLogSavePath := path.Join(logDir, HttpLogSavePath)
 

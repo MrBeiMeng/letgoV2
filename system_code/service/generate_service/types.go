@@ -58,7 +58,7 @@ type FileMetaData struct {
 
 func NewFileMetaData(packageName string, jsonExampleTestcases string, goCodeSnippet string, dirNum uint32) *FileMetaData {
 
-	err, dirId := ConvInt2zzza(dirNum)
+	err, dirId := util.ConvInt2zzza(dirNum)
 	if err != nil {
 		logging.Error(err)
 	}
